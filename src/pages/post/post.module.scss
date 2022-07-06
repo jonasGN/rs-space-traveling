@@ -1,1 +1,19 @@
-// TODO
+.banner {
+  height: 400px;
+
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.contentContainer {
+  margin-block: 5rem;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--heading-color);
+  }
+}

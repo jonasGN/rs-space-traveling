@@ -22,24 +22,3 @@
     }
   }
 }
-
-.infoContainer {
-  display: flex;
-  align-items: center;
-
-  div {
-    display: flex;
-    align-items: center;
-
-    & + div {
-      margin-left: 1.5rem;
-    }
-  }
-
-  span,
-  time {
-    font-size: 0.875rem;
-    margin-left: 0.5rem;
-    color: var(--info-color);
-  }
-}

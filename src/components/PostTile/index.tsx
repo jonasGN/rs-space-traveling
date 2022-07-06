@@ -1,5 +1,6 @@
 import Link, { LinkProps } from 'next/link';
 import { FiCalendar, FiUser } from 'react-icons/fi';
+import { PostInfo, PostInfoContainer } from '../PostInfo';
 
 import styles from './post.tile.module.scss';
 
@@ -17,8 +18,7 @@ interface PostTileProps extends LinkProps {
 }
 
 export function PostTile({ post, ...props }: PostTileProps): JSX.Element {
-  const { data, first_publication_date } = post;
-  const iconSize = 20;
+  const { data, first_publication_date: moment } = post;
 
   return (
     <Link {...props}>
@@ -26,16 +26,10 @@ export function PostTile({ post, ...props }: PostTileProps): JSX.Element {
         <strong>{data.title}</strong>
         <p>{data.subtitle}</p>
 
-        <div className={styles.infoContainer}>
-          <div>
-            <FiCalendar size={iconSize} />
-            <time>{first_publication_date}</time>
-          </div>
-          <div>
-            <FiUser size={iconSize} />
-            <span>{data.author}</span>
-          </div>
-        </div>
+        <PostInfoContainer>
+          <PostInfo info={moment} element="time" icon={<FiCalendar />} />
+          <PostInfo info={data.author} icon={<FiUser />} />
+        </PostInfoContainer>
       </a>
     </Link>
   );
