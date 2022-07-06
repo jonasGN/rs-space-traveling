@@ -1,7 +1,9 @@
-import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { GetStaticProps } from 'next';
+import { useState } from 'react';
 import { PostTile } from '../components/PostTile';
 
+import { toLocaleDate } from '../helpers/formatters';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
@@ -27,7 +29,27 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
-  // const { results, next_page } = postsPagination;
+  const [posts, setPosts] = useState<PostPagination>(postsPagination);
+
+  async function handleLoadMorePosts(): Promise<void> {
+    const response = await fetch(postsPagination.next_page);
+    const data = (await response.json()) as PostPagination;
+
+    const newPosts = data.results.map<Post>(post => ({
+      uid: post.uid,
+      first_publication_date: toLocaleDate(post.first_publication_date),
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
+    }));
+
+    setPosts({
+      next_page: data.next_page,
+      results: [...posts.results, ...newPosts],
+    });
+  }
 
   return (
     <>
@@ -35,8 +57,15 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <title>Home | Blog</title>
       </Head>
 
-      <main className={commonStyles.widthContainer}>
-        <PostTile />
+      <main className={`${commonStyles.widthContainer} ${styles.container}`}>
+        {posts.results.map(post => (
+          <PostTile key={post.uid} href={`post/${post.uid}`} post={post} />
+        ))}
+        {posts.next_page ? (
+          <button type="button" onClick={handleLoadMorePosts}>
+            Carregar mais
+          </button>
+        ) : null}
       </main>
     </>
   );
@@ -44,11 +73,24 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getByType('posts');
+  const postsResponse = await prismic.getByType('post', { pageSize: 5 });
 
-  const results = '';
+  const posts = postsResponse.results.map<Post>(post => ({
+    uid: post.uid,
+    first_publication_date: toLocaleDate(post.first_publication_date),
+    data: {
+      title: post.data.title,
+      subtitle: post.data.subtitle,
+      author: post.data.author,
+    },
+  }));
 
   return {
-    props: { results },
+    props: {
+      postsPagination: {
+        results: posts,
+        next_page: postsResponse.next_page,
+      },
+    },
   };
 };

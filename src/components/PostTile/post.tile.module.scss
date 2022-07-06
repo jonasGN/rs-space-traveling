@@ -1,9 +1,12 @@
 .container {
+  display: block;
+
   strong {
     display: block;
-    font-size: 1.75rem;
     color: var(--heading-color);
     margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: bold;
 
     transition: color 0.2s ease;
   }
