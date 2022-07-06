@@ -1,4 +1,6 @@
 import { GetStaticProps } from 'next';
+import Head from 'next/head';
+import { PostTile } from '../components/PostTile';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -24,13 +26,29 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-// export default function Home() {
-//   // TODO
-// }
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  // const { results, next_page } = postsPagination;
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient({});
-//   // const postsResponse = await prismic.getByType(TODO);
+  return (
+    <>
+      <Head>
+        <title>Home | Blog</title>
+      </Head>
 
-//   // TODO
-// };
+      <main className={commonStyles.widthContainer}>
+        <PostTile />
+      </main>
+    </>
+  );
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient({});
+  const postsResponse = await prismic.getByType('posts');
+
+  const results = '';
+
+  return {
+    props: { results },
+  };
+};
