@@ -1,5 +1,6 @@
 import Link, { LinkProps } from 'next/link';
 import { FiCalendar, FiUser } from 'react-icons/fi';
+import { toLocaleDate } from '../../helpers/formatters';
 import { PostInfo, PostInfoContainer } from '../PostInfo';
 
 import styles from './post.tile.module.scss';
@@ -27,7 +28,11 @@ export function PostTile({ post, ...props }: PostTileProps): JSX.Element {
         <p>{data.subtitle}</p>
 
         <PostInfoContainer>
-          <PostInfo info={moment} element="time" icon={<FiCalendar />} />
+          <PostInfo
+            info={toLocaleDate(moment)}
+            element="time"
+            icon={<FiCalendar />}
+          />
           <PostInfo info={data.author} icon={<FiUser />} />
         </PostInfoContainer>
       </a>

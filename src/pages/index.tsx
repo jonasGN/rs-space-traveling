@@ -59,11 +59,11 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
 
       <main className={`${commonStyles.widthContainer} ${styles.container}`}>
         {posts.results.map(post => (
-          <PostTile key={post.uid} href={`post/${post.uid}`} post={post} />
+          <PostTile key={post.uid} href={`/post/${post.uid}`} post={post} />
         ))}
         {posts.next_page ? (
           <button type="button" onClick={handleLoadMorePosts}>
-            Carregar mais
+            Carregar mais posts
           </button>
         ) : null}
       </main>
@@ -77,7 +77,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const posts = postsResponse.results.map<Post>(post => ({
     uid: post.uid,
-    first_publication_date: toLocaleDate(post.first_publication_date),
+    first_publication_date: post.first_publication_date,
     data: {
       title: post.data.title,
       subtitle: post.data.subtitle,
