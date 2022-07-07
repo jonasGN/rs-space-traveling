@@ -1,5 +1,5 @@
 .banner {
-  height: 400px;
+  height: 25rem;
 
   img {
     height: 100%;
@@ -16,4 +16,56 @@
     font-weight: bold;
     color: var(--heading-color);
   }
+}
+
+.content {
+  font-size: 1.125rem;
+  line-height: 1.4;
+
+  margin-top: 4rem;
+
+  h2 {
+    margin-top: 3rem;
+    padding-bottom: 1rem;
+  }
+
+  p {
+    & + p {
+      margin-top: 1rem;
+    }
+  }
+
+  em {
+    display: block;
+    padding-block: 1rem;
+    color: var(--info-color);
+  }
+
+  a {
+    color: var(--highlight-color);
+  }
+
+  strong {
+    color: var(--heading-color);
+  }
+
+  ul {
+    li {
+      & + li {
+        margin-top: 1rem;
+      }
+    }
+  }
+}
+
+.loading {
+  display: flex;
+
+  color: var(--highlight-color);
+  font-size: 1.125rem;
+  font-weight: bold;
+
+  padding-block: 4rem;
+  align-items: center;
+  justify-content: center;
 }
