@@ -1,7 +1,7 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react/jsx-fragments */
 import { Fragment } from 'react';
-import { asHTML } from '@prismicio/helpers';
+import { asHTML, asText } from '@prismicio/helpers';
 import { useRouter } from 'next/router';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -45,12 +45,10 @@ export default function Post({ post }: PostProps): JSX.Element {
 
   const totalWords = data.content.reduce((total, item) => {
     let sum = total;
-    const headingSum = item.heading.split(' ').filter(head => head).length;
-    item.body.forEach(content => {
-      sum += content.text.split(' ').filter(con => con).length;
-    });
+    const headingSum = item.heading.split(' ').length;
+    const bodySum = asText(item.body as []).split(' ').length;
 
-    sum += headingSum;
+    sum += headingSum + bodySum;
     return sum;
   }, 0);
 
