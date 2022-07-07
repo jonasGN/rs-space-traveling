@@ -31,7 +31,7 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
   const [posts, setPosts] = useState<PostPagination>(postsPagination);
 
-  async function handleLoadMorePosts(): Promise<void> {
+  async function loadMorePosts(): Promise<void> {
     const response = await fetch(postsPagination.next_page);
     const data = (await response.json()) as PostPagination;
 
@@ -45,10 +45,12 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
       },
     }));
 
-    setPosts({
+    const newPage = {
       next_page: data.next_page,
       results: [...posts.results, ...newPosts],
-    });
+    };
+
+    setPosts(newPage);
   }
 
   return (
@@ -62,7 +64,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
           <PostTile key={post.uid} href={`/post/${post.uid}`} post={post} />
         ))}
         {posts.next_page ? (
-          <button type="button" onClick={handleLoadMorePosts}>
+          <button type="button" onClick={loadMorePosts}>
             Carregar mais posts
           </button>
         ) : null}
@@ -92,5 +94,6 @@ export const getStaticProps: GetStaticProps = async () => {
         next_page: postsResponse.next_page,
       },
     },
+    revalidate: 60 * 60, // 1 minute
   };
 };

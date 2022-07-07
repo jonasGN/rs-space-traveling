@@ -20,7 +20,9 @@
   display: flex;
   margin-top: 1.5rem;
 
-  div + div {
-    margin-left: 1.5rem;
+  div {
+    & + div {
+      margin-left: 1.5rem;
+    }
   }
 }

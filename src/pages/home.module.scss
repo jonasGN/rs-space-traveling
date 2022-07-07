@@ -1,8 +1,10 @@
 .container {
   padding-block: 2rem;
 
-  a + a {
-    margin-top: 3rem;
+  a {
+    & + a {
+      margin-top: 3rem;
+    }
   }
 
   button {

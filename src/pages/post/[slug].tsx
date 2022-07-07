@@ -7,8 +7,10 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { PostInfo, PostInfoContainer } from '../../components/PostInfo';
+import { LoadingFeedback } from '../../components/LoadingFeedback';
+import { Banner } from '../../components/Banner';
 
-import { toLocaleDate } from '../../helpers/formatters';
+import { toEstimateReadingTime, toLocaleDate } from '../../helpers/formatters';
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -37,17 +39,9 @@ interface PostProps {
 
 export default function Post({ post }: PostProps): JSX.Element {
   const router = useRouter();
+  if (router.isFallback) return <LoadingFeedback />;
 
-  if (router.isFallback) {
-    return (
-      <div className={`${commonStyles.widthContainer} ${styles.loading}`}>
-        <span className={styles.loading}>Carregando...</span>
-      </div>
-    );
-  }
-
-  const articleClasses = `${commonStyles.widthContainer} ${styles.contentContainer}`;
-  const { first_publication_date: moment, data } = post;
+  const { first_publication_date, data } = post;
 
   const totalWords = data.content.reduce((total, item) => {
     let sum = total;
@@ -60,8 +54,10 @@ export default function Post({ post }: PostProps): JSX.Element {
     return sum;
   }, 0);
 
-  const readTimeEstimateInMinutes = Math.ceil(totalWords / 200);
+  const publicatedAt = toLocaleDate(first_publication_date);
+  const readingTime = toEstimateReadingTime(totalWords);
 
+  const articleClasses = `${commonStyles.widthContainer} ${styles.contentContainer}`;
   return (
     <>
       <Head>
@@ -69,26 +65,18 @@ export default function Post({ post }: PostProps): JSX.Element {
       </Head>
 
       <main>
-        {data.banner.url ? (
-          <div className={styles.banner}>
-            <img src={data.banner.url} alt={data.title} />
-          </div>
-        ) : null}
-
+        <Banner url={data.banner.url} alt={data.title} />
         <article className={articleClasses}>
           <h1>{data.title}</h1>
 
           <PostInfoContainer>
             <PostInfo
-              info={toLocaleDate(moment)}
+              info={publicatedAt}
               element="time"
               icon={<FiCalendar />}
             />
             <PostInfo info={data.author} icon={<FiUser />} />
-            <PostInfo
-              info={`${readTimeEstimateInMinutes} min`}
-              icon={<FiClock />}
-            />
+            <PostInfo info={readingTime} icon={<FiClock />} />
           </PostInfoContainer>
 
           <div className={styles.content}>
@@ -96,9 +84,7 @@ export default function Post({ post }: PostProps): JSX.Element {
               <Fragment key={item.heading}>
                 {item.heading ? <h2>{item.heading}</h2> : null}
                 <section
-                  dangerouslySetInnerHTML={{
-                    __html: asHTML(item.body),
-                  }}
+                  dangerouslySetInnerHTML={{ __html: asHTML(item.body as []) }}
                 />
               </Fragment>
             ))}
@@ -111,7 +97,7 @@ export default function Post({ post }: PostProps): JSX.Element {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient({});
-  const posts = await prismic.getByType('post', { pageSize: 2 });
+  const posts = await prismic.getByType('post', { pageSize: 4 });
 
   const paths = posts.results.map(post => ({
     params: { slug: post.uid },

@@ -1,0 +1,15 @@
+.loading {
+  display: flex;
+
+  color: var(--highlight-color);
+  font-size: 1.125rem;
+  font-weight: bold;
+
+  padding-block: 4rem;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    display: block;
+  }
+}

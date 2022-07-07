@@ -21,6 +21,8 @@ interface PostTileProps extends LinkProps {
 export function PostTile({ post, ...props }: PostTileProps): JSX.Element {
   const { data, first_publication_date: moment } = post;
 
+  const date = toLocaleDate(moment);
+
   return (
     <Link {...props}>
       <a className={styles.container}>
@@ -28,11 +30,7 @@ export function PostTile({ post, ...props }: PostTileProps): JSX.Element {
         <p>{data.subtitle}</p>
 
         <PostInfoContainer>
-          <PostInfo
-            info={toLocaleDate(moment)}
-            element="time"
-            icon={<FiCalendar />}
-          />
+          <PostInfo info={date} element="time" icon={<FiCalendar />} />
           <PostInfo info={data.author} icon={<FiUser />} />
         </PostInfoContainer>
       </a>
